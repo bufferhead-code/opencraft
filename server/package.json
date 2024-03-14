@@ -1,0 +1,22 @@
+{
+  "name": "opencraft",
+  "version": "1.0.0",
+  "description": "An open source clone of infinite craft",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@elysiajs/cors": "^0.8.0",
+    "@fastify/cors": "^9.0.1",
+    "elysia": "^0.8.17",
+    "fastify": "^4.26.2",
+    "node-llama-cpp": "^2.8.8",
+    "path": "^0.12.7",
+    "url": "^0.11.3"
+  }
+}

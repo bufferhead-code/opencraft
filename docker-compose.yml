@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build: ./frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=${NETWORK_NAME:-reverse-proxy-docker-traefik_routing}"
+      # http
+      - "traefik.http.routers.opencraft-frontend.rule=Host(`${FRONTEND_DOMAIN:-opencraft.bufferhead.com}`)"
+      - "traefik.http.routers.opencraft-frontend.entrypoints=web"
+      - "traefik.http.services.opencraft-frontend.loadbalancer.server.port=5173"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    name: "${NETWORK_NAME:-reverse-proxy-docker-traefik_routing}"
+    external: true
