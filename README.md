@@ -2,9 +2,9 @@
 
 OpenCraft is an open source implementation of the popular game InfiniteCraft. 
 
-**You can learn more about how it works and how i made it [here](http://www.youtube.com/watch?v=u2zZJ5hZdt0)**
+**You can learn more about how it works and how i made it [here](http://www.youtube.com/watch?v=aqrPOPq1kP0)**
 
-[![I cloned Infinite Craft](http://img.youtube.com/vi/u2zZJ5hZdt0/0.jpg)](http://www.youtube.com/watch?v=u2zZJ5hZdt0 'I cloned Infinite Craft')
+[![I cloned Infinite Craft](http://img.youtube.com/vi/aqrPOPq1kP0/0.jpg)](http://www.youtube.com/watch?v=aqrPOPq1kP0 'I cloned Infinite Craft')
 
 
 ## Setup
