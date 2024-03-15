@@ -45,8 +45,8 @@ npm run start
 
 ## Support me
 
-We are building **solidtime - The Open Source Time Tracker**
+We are building **[solidtime](https://www.solidtime.io) - The modern Open Source Time Tracker**
 
-[<img width="600" alt="image" src="https://github.com/bufferhead-code/opencraft/assets/6266887/72437557-7a68-4da1-bcc7-befe808134fc">](https://solidtime.io)
+[<img width="600" alt="image" src="https://github.com/bufferhead-code/opencraft/assets/6266887/72437557-7a68-4da1-bcc7-befe808134fc">](https://www.solidtime.io)
 
 
