@@ -1,10 +1,35 @@
-import Fastify from 'fastify'
+import Fastify from 'fastify';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 import { fileURLToPath } from "url";
 import path from "path";
 import { LlamaChatSession, LlamaContext, LlamaJsonSchemaGrammar, LlamaModel } from "node-llama-cpp";
-import cors from '@fastify/cors'
+import cors from '@fastify/cors';
 
-const __filename = fileURLToPath(import.meta.url)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const generate = true;
+
+let db;
+
+async function initializeDatabase() {
+    db = await open({
+        filename: path.join(__dirname, 'cache.db'),
+        driver: sqlite3.Database
+    });
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS word_cache (
+            id INTEGER PRIMARY KEY,
+            first_word TEXT,
+            second_word TEXT,
+            result TEXT,
+            emoji TEXT
+        )
+    `);
+}
+
+initializeDatabase();
 
 const fastify = Fastify({
     logger: true,
@@ -14,14 +39,44 @@ await fastify.register(cors, {
     // put your options here
 })
 
+async function craftNewWordFromCache(firstWord, secondWord) {
+    let cachedResult = await db.get('SELECT result, emoji FROM word_cache WHERE first_word = ? AND second_word = ?', [firstWord, secondWord]);
+
+    if (cachedResult) {
+        return cachedResult;
+    }
+
+    cachedResult = await db.get('SELECT result, emoji FROM word_cache WHERE first_word = ? AND second_word = ?', [secondWord, firstWord]);
+
+    return cachedResult;
+}
+
+async function cacheNewWord(firstWord, secondWord, result, emoji) {
+    await db.run('INSERT INTO word_cache (first_word, second_word, result, emoji) VALUES (?, ?, ?, ?)', [firstWord, secondWord, result, emoji]);
+}
+
 async function craftNewWord(firstWord, secondWord) {
+    const cachedResult = await craftNewWordFromCache(firstWord, secondWord);
+    if (cachedResult) {
+        return cachedResult;
+    }
+
+    if (!generate) {
+        const result = {
+            result: "404",
+            emoji: "❌"
+        };
+
+        return result;
+    }
+
     console.log(firstWord, secondWord);
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const model = new LlamaModel({
         modelPath: path.join(__dirname, "models", "mistral-7b-instruct-v0.1.Q8_0.gguf"),
     });
-    const context = new LlamaContext({model, seed: 0});
-    const session = new LlamaChatSession({context});
+    const context = new LlamaContext({ model, seed: 0 });
+    const session = new LlamaChatSession({ context });
 
     const grammar = new LlamaJsonSchemaGrammar({
         "type": "object",
@@ -32,6 +87,14 @@ async function craftNewWord(firstWord, secondWord) {
         }
     });
 
+    const result = await generateWord(firstWord, secondWord, session, grammar, context);
+
+    await cacheNewWord(firstWord, secondWord, result.result, result.emoji);
+
+    return result;
+}
+
+async function generateWord(firstWord, secondWord, session, grammar, context) {
     const systemPrompt =
         'You are a helpful assistant that helps people to craft new things by combining two words into a new word. ' +
         'The most important rules that you have to follow with every single answer that you are not allowed to use the words ' + firstWord + " and " + secondWord + ' as part of your answer and that you are only allowed to answer with one thing. ' +
@@ -128,8 +191,8 @@ fastify.route({
             200: {
                 type: 'object',
                 properties: {
-                    result: {type: 'string'},
-                    emoji: {type: 'string'}
+                    result: { type: 'string' },
+                    emoji: { type: 'string' }
                 }
             }
         }
