@@ -39,7 +39,7 @@ docker-compose up -d
 You can start the API/Backend Server by running
 
 ```bash
-cd backend
+cd server
 npm run start
 ```
 
