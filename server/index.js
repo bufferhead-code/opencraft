@@ -1,15 +1,13 @@
-import Fastify from 'fastify';
+import Fastify from 'fastify'
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import { fileURLToPath } from "url";
 import path from "path";
 import { LlamaChatSession, LlamaContext, LlamaJsonSchemaGrammar, LlamaModel } from "node-llama-cpp";
-import cors from '@fastify/cors';
+import cors from '@fastify/cors'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const generate = true;
 
 let db;
 
@@ -61,22 +59,13 @@ async function craftNewWord(firstWord, secondWord) {
         return cachedResult;
     }
 
-    if (!generate) {
-        const result = {
-            result: "404",
-            emoji: "❌"
-        };
-
-        return result;
-    }
-
     console.log(firstWord, secondWord);
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const model = new LlamaModel({
         modelPath: path.join(__dirname, "models", "mistral-7b-instruct-v0.1.Q8_0.gguf"),
     });
-    const context = new LlamaContext({ model, seed: 0 });
-    const session = new LlamaChatSession({ context });
+    const context = new LlamaContext({model, seed: 0});
+    const session = new LlamaChatSession({context});
 
     const grammar = new LlamaJsonSchemaGrammar({
         "type": "object",
@@ -191,8 +180,8 @@ fastify.route({
             200: {
                 type: 'object',
                 properties: {
-                    result: { type: 'string' },
-                    emoji: { type: 'string' }
+                    result: {type: 'string'},
+                    emoji: {type: 'string'}
                 }
             }
         }
