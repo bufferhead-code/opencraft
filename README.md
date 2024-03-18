@@ -43,6 +43,10 @@ cd server
 npm run start
 ```
 
+## Contributing
+
+Please open an issue and wait for the approval of a Maintainer before submitting a PR. 
+
 ## Support me
 
 We are building **[solidtime](https://www.solidtime.io) - The modern Open Source Time Tracker**
